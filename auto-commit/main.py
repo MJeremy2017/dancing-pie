@@ -4,6 +4,7 @@ import os
 
 DIR_PATH = 'auto-commit/foo'
 
+
 def list_all_files(directory: str):
     all_entries = os.listdir(directory)
     files = [entry for entry in all_entries if os.path.isfile(os.path.join(directory, entry))]
