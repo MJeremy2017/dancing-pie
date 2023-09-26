@@ -1,10 +1,23 @@
 import subprocess
+from github import Github
+import os
+
+DIR_PATH = 'auto-commit/foo'
+
+def list_all_files(directory: str):
+    all_entries = os.listdir(directory)
+    files = [entry for entry in all_entries if os.path.isfile(os.path.join(directory, entry))]
+
+    return files
 
 
-def create_file(file: str):
-    with open(file, 'w') as f:
-        f.write("this is a test file")
-    print("created file", file)
+def get_max_day():
+    file_names = list_all_files(DIR_PATH)
+    max_cnt = -1
+    for file in file_names:
+        if file.startswith('day_'):
+            max_cnt = max(max_cnt, int(file[4:]))
+    return max_cnt
 
 
 def commit_file(file: str):
@@ -18,17 +31,33 @@ def commit_file(file: str):
     subprocess.run(cmd)
 
 
-def add_content_to_file(file: str):
-    # TODO
-    pass
+def add_content_to_file(file: str, day_number: int):
+    g = Github()
+    repo_name = "kamyu104/LeetCode-Solutions"
+    path = "Python"
+
+    repo = g.get_repo(repo_name)
+    dir_content = repo.get_contents(path)
+    cnt = 0
+    for content_file in dir_content:
+        if content_file.type == "file":
+            if cnt == day_number:
+                file_content = content_file.decoded_content.decode("utf-8")
+                with open(file, "w") as f:
+                    f.write(file_content)
+                break
+            cnt += 1
 
 
-def make_new_file_commit(file: str):
-    create_file(file)
-    add_content_to_file(file)
+def create_file_and_commit():
+    day_number = get_max_day()
+    file = 'day_' + str(day_number + 1) + '.py'
+    file = os.path.join(DIR_PATH, file)
+    print("Writing to file", file)
+    add_content_to_file(file, day_number)
     commit_file(file)
 
 
 if __name__ == '__main__':
-    # TODO schedule
-    make_new_file_commit("auto-commit/foo/day-1.py")
+    # TODO error
+    create_file_and_commit()
