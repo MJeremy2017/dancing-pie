@@ -42,7 +42,6 @@ def add_content_to_file(file: str, day_number: int):
     cnt = 0
     for content_file in dir_content:
         if content_file.type == "file":
-            print(cnt, day_number, content_file.type)
             if cnt == day_number:
                 file_content = content_file.decoded_content.decode("utf-8")
                 with open(file, "w") as f:
