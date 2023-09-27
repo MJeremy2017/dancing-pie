@@ -12,13 +12,13 @@ def list_all_files(directory: str):
     return files
 
 
-def get_max_day():
+def get_day_number():
     file_names = list_all_files(DIR_PATH)
     max_cnt = -1
     for file in file_names:
         if file.startswith('day_'):
-            max_cnt = max(max_cnt, int(file[4:]))
-    return max_cnt
+            max_cnt = max(max_cnt, int(file.split('.')[0][4:]))
+    return max_cnt + 1
 
 
 def commit_file(file: str):
@@ -42,17 +42,19 @@ def add_content_to_file(file: str, day_number: int):
     cnt = 0
     for content_file in dir_content:
         if content_file.type == "file":
+            print(cnt, day_number, content_file.type)
             if cnt == day_number:
                 file_content = content_file.decoded_content.decode("utf-8")
                 with open(file, "w") as f:
                     f.write(file_content)
+                print("Done writing to file", file)
                 break
             cnt += 1
 
 
 def create_file_and_commit():
-    day_number = get_max_day()
-    file = 'day_' + str(day_number + 1) + '.py'
+    day_number = get_day_number()
+    file = 'day_' + str(day_number) + '.py'
     file = os.path.join(DIR_PATH, file)
     print("Writing to file", file)
     add_content_to_file(file, day_number)
@@ -60,5 +62,4 @@ def create_file_and_commit():
 
 
 if __name__ == '__main__':
-    # TODO error
     create_file_and_commit()
