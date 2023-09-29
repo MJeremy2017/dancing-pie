@@ -2,7 +2,9 @@ import subprocess
 from github import Github
 import os
 
-DIR_PATH = 'auto-commit/foo'
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DIR_PATH = 'foo'
 
 
 def list_all_files(directory: str):
@@ -13,7 +15,7 @@ def list_all_files(directory: str):
 
 
 def get_day_number():
-    file_names = list_all_files(DIR_PATH)
+    file_names = list_all_files(os.path.join(BASE_DIR, DIR_PATH))
     max_cnt = -1
     for file in file_names:
         if file.startswith('day_'):
@@ -54,7 +56,7 @@ def add_content_to_file(file: str, day_number: int):
 def create_file_and_commit():
     day_number = get_day_number()
     file = 'day_' + str(day_number) + '.py'
-    file = os.path.join(DIR_PATH, file)
+    file = os.path.join(BASE_DIR, DIR_PATH, file)
     print("Writing to file", file)
     add_content_to_file(file, day_number)
     commit_file(file)
