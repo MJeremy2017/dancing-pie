@@ -1,6 +1,6 @@
 """
 A,B,C,D,E,F are houses. for a test case [{"A", "B"}, {"B", "C"}, {"D"}]
-House B has neighbours HouseA , House C. House A has only House B as neighbour, house D has no neighbours.
+House B has neighbours House A , House C. House A has only House B as neighbour, house D has no neighbours.
 So find the houses which are not neighbours. Answer should be as a list of list , keep the number of
 inner-list to a minimum eg [['A', 'C', 'D'], ['B', 'D']] is accepted.
 
@@ -9,38 +9,38 @@ inner-list to a minimum eg [['A', 'C', 'D'], ['B', 'D']] is accepted.
 from collections import defaultdict
 
 
-def non_neighbors(graph):
-    ms = defaultdict(set)
-    hs = set()
-    for it in graph:
-        if len(it) == 2:
-            a, b = it
-            ms[a].add(b)
-            ms[b].add(a)
-            hs.add(a)
-            hs.add(b)
+def find_non_neighbours(A):
+    house_all = set()
+    adj = defaultdict(set)
+    for it in A:
+        if len(it) == 1:
+            for e in it:
+                adj[e] = set()
+                house_all.add(e)
         else:
-            for i in it:
-                hs.add(i)
-    non_neighbors = defaultdict(set)
-    for ng in hs:
-        non_neighbors[ng] = hs - ms[ng] - {ng}
+            a, b = it
+            adj[a].add(b)
+            adj[b].add(a)
+            house_all.add(a)
+            house_all.add(b)
+
+    x_adj = defaultdict(set)
+    for k, neigh in adj.items():
+        x_adj[k] = house_all - neigh - {k}
+    print(x_adj)
+
     ans = []
 
-    print(non_neighbors)
-
-    def _dfs(p, nn):
-        if len(nn) == 0:
-            p.sort()
-            if p not in ans:
-                ans.append(p)
+    def _dfs(path, non: set):
+        if len(non) == 0:
+            if sorted(path) not in ans:
+                ans.append(sorted(path))
             return
-        for ng in nn:
-            nn2 = nn.intersection(non_neighbors[ng])
-            _dfs(p + [ng], nn2)
+        for node in non:
+            _dfs(path + [node], non.intersection(x_adj[node]))
 
-    for ng in hs:
-        _dfs([ng], non_neighbors[ng])
+    for node in house_all:
+        _dfs([node], x_adj[node])
     return ans
 
 
@@ -56,5 +56,5 @@ if __name__ == '__main__':
     ]
 
     for tc in test_cases:
-        res = non_neighbors(tc)
+        res = find_non_neighbours(tc)
         print('ans', res)
